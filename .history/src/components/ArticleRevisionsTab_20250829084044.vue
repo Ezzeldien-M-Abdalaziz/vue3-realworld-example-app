@@ -35,7 +35,7 @@
                          <button
                v-if="userStore.isAuthorized"
                class="btn btn-sm btn-outline-primary me-2"
-               @click="viewRevision(revision)"
+               @click="() => { console.log('Button clicked!'); viewRevision(revision); }"
              >
                View
              </button>
@@ -155,17 +155,21 @@ function closePreview() {
 }
 
 function formatDate(dateString: string) {
+  console.log('formatDate called with:', dateString, 'type:', typeof dateString) // Debug log
+
   if (!dateString)
     return 'Unknown date'
 
   try {
     const date = new Date(dateString)
     if (isNaN(date.getTime())) {
+      console.log('Invalid date detected for:', dateString) // Debug log
       return 'Invalid date'
     }
     return date.toLocaleString()
   }
   catch (error) {
+    console.error('Date formatting error:', error, 'for date:', dateString)
     return 'Invalid date'
   }
 }

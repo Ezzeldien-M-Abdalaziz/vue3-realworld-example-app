@@ -35,7 +35,7 @@
                          <button
                v-if="userStore.isAuthorized"
                class="btn btn-sm btn-outline-primary me-2"
-               @click="viewRevision(revision)"
+               @click="() => { console.log('Button clicked!'); viewRevision(revision); }"
              >
                View
              </button>

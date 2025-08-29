@@ -35,7 +35,7 @@
                          <button
                v-if="userStore.isAuthorized"
                class="btn btn-sm btn-outline-primary me-2"
-               @click="viewRevision(revision)"
+               @click="() => { console.log('Button clicked!'); viewRevision(revision); }"
              >
                View
              </button>
@@ -121,6 +121,7 @@ async function revertRevision(revisionId: number) {
 
   try {
     const res = await api.articles.revertArticleRevision(props.articleId, revisionId)
+    console.log('Revert response:', res) // Debug log
 
     if (res.data && res.data.article && res.data.article.slug) {
       alert('Article reverted successfully!')
@@ -134,6 +135,7 @@ async function revertRevision(revisionId: number) {
     }
   }
   catch (error_) {
+    console.error('Revert error:', error_) // Debug log
     if (isFetchError(error_))
       alert('Failed to revert revision.')
     else
@@ -145,8 +147,10 @@ async function revertRevision(revisionId: number) {
 }
 
 function viewRevision(revision: ArticleRevision) {
+  console.log('viewRevision called with:', revision) // Debug log
   selectedRevision.value = revision
   showPreview.value = true
+  console.log('showPreview set to:', showPreview.value) // Debug log
 }
 
 function closePreview() {
@@ -155,17 +159,21 @@ function closePreview() {
 }
 
 function formatDate(dateString: string) {
+  console.log('formatDate called with:', dateString, 'type:', typeof dateString) // Debug log
+
   if (!dateString)
     return 'Unknown date'
 
   try {
     const date = new Date(dateString)
     if (isNaN(date.getTime())) {
+      console.log('Invalid date detected for:', dateString) // Debug log
       return 'Invalid date'
     }
     return date.toLocaleString()
   }
   catch (error) {
+    console.error('Date formatting error:', error, 'for date:', dateString)
     return 'Invalid date'
   }
 }

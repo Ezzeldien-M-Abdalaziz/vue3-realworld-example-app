@@ -115,6 +115,8 @@ async function fetchRevisions() {
 }
 
 async function revertRevision(revisionId: number) {
+  if (!confirm('Are you sure you want to revert to this revision? This action cannot be undone.'))
+    return
 
   reverting.value = true
 

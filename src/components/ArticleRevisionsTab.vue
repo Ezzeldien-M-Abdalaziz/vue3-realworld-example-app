@@ -23,9 +23,9 @@
         <div class="revision-header">
           <div class="revision-info">
             <h4>{{ revision.title }}</h4>
-                         <p class="text-muted">
-               Created: {{ formatDate(revision.createdAt) }}
-             </p>
+            <p class="text-muted">
+              Created: {{ formatDate(revision.createdAt) }}
+            </p>
             <p v-if="revision.description" class="revision-description">
               {{ revision.description }}
             </p>
@@ -34,16 +34,16 @@
           <div class="revision-actions">
             <button
               v-if="userStore.isAuthorized"
-              @click="viewRevision(revision)"
               class="btn btn-sm btn-outline-primary me-2"
+              @click="viewRevision(revision)"
             >
               View
             </button>
             <button
               v-if="userStore.isAuthorized"
-              @click="revertRevision(revision.id)"
               class="btn btn-sm btn-warning"
               :disabled="reverting"
+              @click="revertRevision(revision.id)"
             >
               {{ reverting ? 'Reverting...' : 'Revert' }}
             </button>
@@ -67,7 +67,7 @@
               type="button"
               class="btn-close"
               @click="closePreview"
-            ></button>
+            />
           </div>
           <div class="modal-body">
             <div v-if="selectedRevision?.description" class="mb-3">
@@ -76,7 +76,7 @@
             </div>
             <div v-if="selectedRevision?.body">
               <strong>Content:</strong>
-              <div v-html="markedContent"></div>
+              <div v-html="markedContent" />
             </div>
           </div>
           <div class="modal-footer">
@@ -96,16 +96,16 @@
     <div
       v-if="showPreview"
       class="modal-backdrop fade show"
-    ></div>
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import marked from 'src/plugins/marked'
 import { api, isFetchError } from 'src/services'
 import type { ArticleRevision } from 'src/services/api'
 import { useUserStore } from 'src/store/user'
-import marked from 'src/plugins/marked'
 
 interface Props {
   articleId: number
@@ -122,11 +122,12 @@ const showPreview = ref(false)
 const selectedRevision = ref<ArticleRevision | null>(null)
 
 const markedContent = computed(() => {
-  if (!selectedRevision.value?.body) return ''
+  if (!selectedRevision.value?.body)
+    return ''
   return marked(selectedRevision.value.body)
 })
 
-const fetchRevisions = async () => {
+async function fetchRevisions() {
   loading.value = true
   error.value = null
 
@@ -134,22 +135,22 @@ const fetchRevisions = async () => {
     const res = await api.articles.getArticleRevisions(props.articleId)
     console.log('Revisions response:', res.data.revisions) // Debug log
     revisions.value = res.data.revisions
-  } catch (err) {
-    console.error('Fetch revisions error:', err) // Debug log
-    if (isFetchError(err)) {
+  }
+  catch (error_) {
+    console.error('Fetch revisions error:', error_) // Debug log
+    if (isFetchError(error_))
       error.value = 'Failed to fetch revisions.'
-    } else {
+    else
       error.value = 'An unexpected error occurred.'
-    }
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }
 
-const revertRevision = async (revisionId: number) => {
-  if (!confirm('Are you sure you want to revert to this revision? This action cannot be undone.')) {
+async function revertRevision(revisionId: number) {
+  if (!confirm('Are you sure you want to revert to this revision? This action cannot be undone.'))
     return
-  }
 
   reverting.value = true
 
@@ -161,37 +162,40 @@ const revertRevision = async (revisionId: number) => {
       alert('Article reverted successfully!')
       // Redirect to the updated article with new slug
       window.location.href = `/#/article/${res.data.article.slug}`
-    } else {
+    }
+    else {
       alert('Article reverted successfully! Redirecting to home...')
       // Fallback to home if slug is not available
       window.location.href = '/#/'
     }
-  } catch (err) {
-    console.error('Revert error:', err) // Debug log
-    if (isFetchError(err)) {
+  }
+  catch (error_) {
+    console.error('Revert error:', error_) // Debug log
+    if (isFetchError(error_))
       alert('Failed to revert revision.')
-    } else {
+    else
       alert('An unexpected error occurred.')
-    }
-  } finally {
+  }
+  finally {
     reverting.value = false
   }
 }
 
-const viewRevision = (revision: ArticleRevision) => {
+function viewRevision(revision: ArticleRevision) {
   selectedRevision.value = revision
   showPreview.value = true
 }
 
-const closePreview = () => {
+function closePreview() {
   showPreview.value = false
   selectedRevision.value = null
 }
 
-const formatDate = (dateString: string) => {
+function formatDate(dateString: string) {
   console.log('formatDate called with:', dateString, 'type:', typeof dateString) // Debug log
 
-  if (!dateString) return 'Unknown date'
+  if (!dateString)
+    return 'Unknown date'
 
   try {
     const date = new Date(dateString)
@@ -200,7 +204,8 @@ const formatDate = (dateString: string) => {
       return 'Invalid date'
     }
     return date.toLocaleString()
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Date formatting error:', error, 'for date:', dateString)
     return 'Invalid date'
   }

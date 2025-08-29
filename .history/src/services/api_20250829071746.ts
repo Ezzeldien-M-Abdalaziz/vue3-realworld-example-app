@@ -46,7 +46,6 @@ export interface Profile {
 }
 
 export interface Article {
-  id: number;
   slug: string;
   title: string;
   description: string;
@@ -88,24 +87,6 @@ export interface NewComment {
   body: string;
 }
 
-export interface ArticleRevision {
-  id: number;
-  article_id?: number;
-  user_id?: number;
-  slug: string;
-  title: string;
-  description?: string;
-  body?: string;
-  /** @format date-time */
-  createdAt: string;
-  /** @format date-time */
-  updatedAt?: string;
-  user?: {
-    id: number;
-    username: string;
-  };
-}
-
 export interface GenericErrorModel {
   errors: {
     body: string[];
@@ -133,6 +114,18 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   /** request cancellation token */
   cancelToken?: CancelToken;
 }
+
+export interface Revision {
+  id: number;
+  /** @format date-time */
+  createdAt: string;
+  /** Optional note about the revision */
+  note?: string;
+  /** The article content at this revision */
+  article: Article;
+  author: Profile;
+}
+
 
 export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
 
@@ -790,50 +783,31 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         secure: true,
         ...params,
       }),
+      /**
+   * @description Get all revisions of an article
+   * @request GET:/articles/{slug}/revisions
+   * @secure
+   */
+  getArticleRevisions: (slug: string, params: RequestParams = {}) =>
+    this.request<{ revisions: Revision[] }, GenericErrorModel>({
+      path: `/articles/${slug}/revisions`,
+      method: "GET",
+      secure: true,
+      ...params,
+    }),
 
-    /**
-     * @description Get article revisions. Auth is required
-     *
-     * @tags Revisions
-     * @name GetArticleRevisions
-     * @summary Get article revisions
-     * @request GET:/articles/{id}/revisions
-     * @secure
-     */
-    getArticleRevisions: (articleId: number, params: RequestParams = {}) =>
-      this.request<
-        {
-          revisions: ArticleRevision[];
-        },
-        GenericErrorModel
-      >({
-        path: `/articles/${articleId}/revisions`,
-        method: "GET",
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * @description Revert article to a specific revision. Auth is required
-     *
-     * @tags Revisions
-     * @name RevertArticleRevision
-     * @summary Revert article to a specific revision
-     * @request POST:/articles/{id}/revisions/{revisionId}/revert
-     * @secure
-     */
-    revertArticleRevision: (articleId: number, revisionId: number, params: RequestParams = {}) =>
-      this.request<
-        {
-          article: Article;
-        },
-        GenericErrorModel
-      >({
-        path: `/articles/${articleId}/revisions/${revisionId}/revert`,
-        method: "POST",
-        secure: true,
-        ...params,
-      }),
+  /**
+   * @description Revert an article to a specific revision
+   * @request POST:/articles/{slug}/revisions/{revisionId}/revert
+   * @secure
+   */
+  revertRevision: (slug: string, revisionId: number, params: RequestParams = {}) =>
+    this.request<{ article: Article }, GenericErrorModel>({
+      path: `/articles/${slug}/revisions/${revisionId}/revert`,
+      method: "POST",
+      secure: true,
+      ...params,
+    }),
 
   };
   tags = {
@@ -857,7 +831,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
-
 }
 
 

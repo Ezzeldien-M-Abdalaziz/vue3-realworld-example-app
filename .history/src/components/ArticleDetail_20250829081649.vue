@@ -41,16 +41,16 @@
 
      <!-- Tabs -->
      <div class="tabs mt-4">
-       <button
-         @click="activeTab = 'content'"
+       <button 
+         @click="activeTab = 'content'" 
          :class="{ active: activeTab === 'content' }"
          class="btn btn-outline-primary me-2"
        >
          Content
        </button>
-       <button
+       <button 
          v-if="userStore.isAuthorized"
-         @click="activeTab = 'revisions'"
+         @click="activeTab = 'revisions'" 
          :class="{ active: activeTab === 'revisions' }"
          class="btn btn-outline-secondary"
        >
@@ -63,27 +63,23 @@
          <div v-html="articleHandledBody"></div>
        </div>
        <div v-if="activeTab === 'revisions'">
-         <ArticleRevisionsTab :articleId="article.id" />
+         <ArticleRevisionsTab :articleSlug="slug" />
        </div>
      </div>
    </div>
  </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import marked from 'src/plugins/marked'
 import { api } from 'src/services'
 import type { Article } from 'src/services/api'
 import ArticleDetailMeta from './ArticleDetailMeta.vue'
-import ArticleRevisionsTab from './ArticleRevisionsTab.vue'
-import { useUserStore } from 'src/store/user'
 
 const route = useRoute()
 const slug = route.params.slug as string
 const article: Article = reactive(await api.articles.getArticle(slug).then(res => res.data.article))
-const userStore = useUserStore()
-const activeTab = ref('content')
 
 const articleHandledBody = computed(() => marked(article.body))
 
@@ -91,22 +87,3 @@ function updateArticle(newArticle: Article) {
   Object.assign(article, newArticle)
 }
 </script>
-
-<style scoped>
-.tabs {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.tabs button.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.tab-content {
-  border-top: 1px solid #ddd;
-  padding-top: 1rem;
-}
-</style>

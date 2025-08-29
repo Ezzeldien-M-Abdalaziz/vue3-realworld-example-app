@@ -41,16 +41,16 @@
 
      <!-- Tabs -->
      <div class="tabs mt-4">
-       <button
-         @click="activeTab = 'content'"
+       <button 
+         @click="activeTab = 'content'" 
          :class="{ active: activeTab === 'content' }"
          class="btn btn-outline-primary me-2"
        >
          Content
        </button>
-       <button
+       <button 
          v-if="userStore.isAuthorized"
-         @click="activeTab = 'revisions'"
+         @click="activeTab = 'revisions'" 
          :class="{ active: activeTab === 'revisions' }"
          class="btn btn-outline-secondary"
        >
@@ -63,7 +63,7 @@
          <div v-html="articleHandledBody"></div>
        </div>
        <div v-if="activeTab === 'revisions'">
-         <ArticleRevisionsTab :articleId="article.id" />
+         <ArticleRevisionsTab :articleSlug="slug" />
        </div>
      </div>
    </div>

@@ -46,7 +46,6 @@ export interface Profile {
 }
 
 export interface Article {
-  id: number;
   slug: string;
   title: string;
   description: string;
@@ -90,20 +89,16 @@ export interface NewComment {
 
 export interface ArticleRevision {
   id: number;
-  article_id?: number;
+  article_id: number;
   user_id?: number;
   slug: string;
   title: string;
   description?: string;
   body?: string;
   /** @format date-time */
-  createdAt: string;
+  created_at: string;
   /** @format date-time */
-  updatedAt?: string;
-  user?: {
-    id: number;
-    username: string;
-  };
+  updated_at: string;
 }
 
 export interface GenericErrorModel {
@@ -797,17 +792,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @tags Revisions
      * @name GetArticleRevisions
      * @summary Get article revisions
-     * @request GET:/articles/{id}/revisions
+     * @request GET:/articles/{slug}/revisions
      * @secure
      */
-    getArticleRevisions: (articleId: number, params: RequestParams = {}) =>
+    getArticleRevisions: (slug: string, params: RequestParams = {}) =>
       this.request<
         {
           revisions: ArticleRevision[];
         },
         GenericErrorModel
       >({
-        path: `/articles/${articleId}/revisions`,
+        path: `/articles/${slug}/revisions`,
         method: "GET",
         secure: true,
         ...params,
@@ -819,17 +814,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @tags Revisions
      * @name RevertArticleRevision
      * @summary Revert article to a specific revision
-     * @request POST:/articles/{id}/revisions/{revisionId}/revert
+     * @request POST:/articles/{slug}/revisions/{revisionId}/revert
      * @secure
      */
-    revertArticleRevision: (articleId: number, revisionId: number, params: RequestParams = {}) =>
+    revertArticleRevision: (slug: string, revisionId: number, params: RequestParams = {}) =>
       this.request<
         {
           article: Article;
         },
         GenericErrorModel
       >({
-        path: `/articles/${articleId}/revisions/${revisionId}/revert`,
+        path: `/articles/${slug}/revisions/${revisionId}/revert`,
         method: "POST",
         secure: true,
         ...params,

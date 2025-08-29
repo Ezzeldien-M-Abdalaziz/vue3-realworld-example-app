@@ -90,20 +90,16 @@ export interface NewComment {
 
 export interface ArticleRevision {
   id: number;
-  article_id?: number;
+  article_id: number;
   user_id?: number;
   slug: string;
   title: string;
   description?: string;
   body?: string;
   /** @format date-time */
-  createdAt: string;
+  created_at: string;
   /** @format date-time */
-  updatedAt?: string;
-  user?: {
-    id: number;
-    username: string;
-  };
+  updated_at: string;
 }
 
 export interface GenericErrorModel {

@@ -35,7 +35,7 @@
           :src="profileImageUrl"
           alt="Profile"
           class="profile-image"
-        />
+        >
         <span>{{ userStore.user.username }}</span>
       </div>
     </div>
@@ -104,14 +104,13 @@ const navLinks = computed(() => allNavLinks.value.filter(
 ))
 
 const profileImageUrl = computed(() => {
-  if (!user.value?.image) return ''
+  if (!user.value?.image)
+    return ''
   return user.value.image.startsWith('http')
     ? user.value.image
     : `${import.meta.env.VITE_API_HOST}/storage/${user.value.image}`
 })
 </script>
-
-
 
 <style scoped>
 .profile-image {

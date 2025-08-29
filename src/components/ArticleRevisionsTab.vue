@@ -115,7 +115,6 @@ async function fetchRevisions() {
 }
 
 async function revertRevision(revisionId: number) {
-
   reverting.value = true
 
   try {

@@ -54,7 +54,7 @@
         :src="profileImageUrl"
         alt="Profile"
         class="profile-image"
-      />
+      >
       <h2>{{ userStore.user?.username }}</h2>
       <p>{{ userStore.user?.bio }}</p>
     </div>
@@ -106,7 +106,8 @@ const showFollow = computed<boolean>(() => user.value?.username !== username.val
 const userStore = useUserStore()
 
 const profileImageUrl = computed(() => {
-  if (!userStore.user?.image) return ''
+  if (!userStore.user?.image)
+    return ''
   return userStore.user.image.startsWith('http')
     ? userStore.user.image
     : `${import.meta.env.VITE_API_HOST}/storage/${userStore.user.image}`

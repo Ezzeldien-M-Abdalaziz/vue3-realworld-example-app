@@ -57,11 +57,16 @@
                   id="profile-image"
                   type="file"
                   accept="image/*"
-                  @change="onImageChange"
                   class="form-control"
-                />
+                  @change="onImageChange"
+                >
               </div>
-              <img v-if="previewImage" :src="previewImage" alt="Profile Preview" class="img-preview" />
+              <img
+                v-if="previewImage"
+                :src="previewImage"
+                alt="Profile Preview"
+                class="img-preview"
+              >
 
               <button
                 class="btn btn-lg btn-primary pull-xs-right"
@@ -99,11 +104,10 @@ const form: UpdateUser = reactive({
   username: '',
   bio: '',
   email: '',
-  password: ''
+  password: '',
 })
 
 const userStore = useUserStore()
-
 
 const errors = ref<Record<string, string[]>>()
 
@@ -120,11 +124,11 @@ onMounted(() => {
 })
 
 const isButtonDisabled = computed(() =>
-  form.username === userStore.user?.username &&
-  form.bio === userStore.user?.bio &&
-  form.email === userStore.user?.email &&
-  !form.password &&
-  !profileImageFile.value
+  form.username === userStore.user?.username
+  && form.bio === userStore.user?.bio
+  && form.email === userStore.user?.email
+  && !form.password
+  && !profileImageFile.value,
 )
 
 function onImageChange(event: Event) {
@@ -141,26 +145,26 @@ async function onSubmit() {
   try {
     if (profileImageFile.value) {
       // For file uploads, we need to use FormData and bypass the generated client
-    const formData = new FormData()
-    formData.append('username', form.username ?? '')
-    formData.append('email', form.email ?? '')
-    formData.append('bio', form.bio ?? '')
-    if (form.password) formData.append('password', form.password)
-    if (profileImageFile.value) formData.append('image', profileImageFile.value)
-    const token = userStore.user?.token
+      const formData = new FormData()
+      formData.append('username', form.username ?? '')
+      formData.append('email', form.email ?? '')
+      formData.append('bio', form.bio ?? '')
+      if (form.password)
+        formData.append('password', form.password)
+      if (profileImageFile.value)
+        formData.append('image', profileImageFile.value)
+      const token = userStore.user?.token
 
-    const response = await fetch(`${import.meta.env.VITE_API_HOST}/api/user`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData
-    })
-
+      const response = await fetch(`${import.meta.env.VITE_API_HOST}/api/user`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      })
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.log('Error response:', errorData)
         errors.value = errorData.errors
         return
       }
@@ -170,27 +174,27 @@ async function onSubmit() {
       userStore.updateUser({
         ...userStore.user,
         ...userData,
-        token: userData.token ?? userStore.user?.token
+        token: userData.token ?? userStore.user?.token,
       })
       await routerPush('profile', { username: userData.username })
-    } else {
+    }
+    else {
       // For text-only updates, use the generated API client
       const updateData: { user: UpdateUser } = {
-        user: {}
+        user: {},
       }
 
-      if (form.username && form.username.trim()) {
+      if (form.username && form.username.trim())
         updateData.user.username = form.username.trim()
-      }
-      if (form.bio && form.bio.trim()) {
+
+      if (form.bio && form.bio.trim())
         updateData.user.bio = form.bio.trim()
-      }
-      if (form.email && form.email.trim()) {
+
+      if (form.email && form.email.trim())
         updateData.user.email = form.email.trim()
-      }
-      if (form.password && form.password.trim()) {
+
+      if (form.password && form.password.trim())
         updateData.user.password = form.password.trim()
-      }
 
       const userData = await api.user.updateCurrentUser(updateData)
         .then(res => res.data.user)
@@ -200,21 +204,16 @@ async function onSubmit() {
     }
   }
   catch (error) {
-    console.error('Submit error:', error)
-    if (isFetchError(error)) errors.value = error.error?.errors
+    if (isFetchError(error))
+      errors.value = error.error?.errors
   }
 }
-
-
-
-
 
 async function onLogout() {
   userStore.updateUser(null)
   await routerPush('global-feed')
 }
 </script>
-
 
 <style scoped>
 .img-preview {

@@ -96,7 +96,6 @@ async function login() {
       errors.value = error.error?.errors
       return
     }
-    console.error(error)
   }
 }
 </script>

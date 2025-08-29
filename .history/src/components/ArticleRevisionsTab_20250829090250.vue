@@ -115,69 +115,41 @@ async function fetchRevisions() {
   }
 }
 
-// async function revertRevision(revisionId: number) {
-//   // eslint-disable-next-line no-alert
-//   if (!confirm('Are you sure you want to revert to this revision? This action cannot be undone.'))
-//     return
-
-//   reverting.value = true
-
-//   try {
-//     const res = await api.articles.revertArticleRevision(props.articleId, revisionId)
-
-//     if (res.data && res.data.article && res.data.article.slug) {
-//       // eslint-disable-next-line no-alert
-//       alert('Article reverted successfully!')
-//       // Redirect to the updated article with new slug
-//       window.location.href = `/#/article/${res.data.article.slug}`
-//     }
-//     else {
-//       // eslint-disable-next-line no-alert
-//       alert('Article reverted successfully! Redirecting to home...')
-//       // Fallback to home if slug is not available
-//       window.location.href = '/#/'
-//     }
-//   }
-//   catch (error_) {
-//     if (isFetchError(error_))
-//       // eslint-disable-next-line no-alert
-//       alert('Failed to revert revision.')
-//     else
-//       // eslint-disable-next-line no-alert
-//       alert('An unexpected error occurred.')
-//   }
-//   finally {
-//     reverting.value = false
-//   }
-// }
-
 async function revertRevision(revisionId: number) {
+  // eslint-disable-next-line no-alert
   if (!confirm('Are you sure you want to revert to this revision? This action cannot be undone.'))
-    return;
+    return
 
-  reverting.value = true;
+  reverting.value = true
 
   try {
-    const res = await api.articles.revertArticleRevision(props.articleId, revisionId);
+    const res = await api.articles.revertArticleRevision(props.articleId, revisionId)
 
     if (res.data && res.data.article && res.data.article.slug) {
-      toast.success("Article reverted successfully!");
-      // Redirect to updated article
-      window.location.href = `/#/article/${res.data.article.slug}`;
-    } else {
-      toast.success("Article reverted successfully! Redirecting to home...");
-      window.location.href = "/#/";
+      // eslint-disable-next-line no-alert
+      alert('Article reverted successfully!')
+      // Redirect to the updated article with new slug
+      window.location.href = `/#/article/${res.data.article.slug}`
     }
-  } catch (error_) {
+    else {
+      // eslint-disable-next-line no-alert
+      alert('Article reverted successfully! Redirecting to home...')
+      // Fallback to home if slug is not available
+      window.location.href = '/#/'
+    }
+  }
+  catch (error_) {
     if (isFetchError(error_))
-      toast.error("Failed to revert revision.");
+      // eslint-disable-next-line no-alert
+      alert('Failed to revert revision.')
     else
-      toast.error("An unexpected error occurred.");
-  } finally {
-    reverting.value = false;
+      // eslint-disable-next-line no-alert
+      alert('An unexpected error occurred.')
+  }
+  finally {
+    reverting.value = false
   }
 }
-
 
 function viewRevision(revision: ArticleRevision) {
   selectedRevision.value = revision

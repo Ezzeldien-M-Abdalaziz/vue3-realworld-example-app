@@ -176,7 +176,6 @@ async function revertRevision(revisionId: number) {
   } finally {
     reverting.value = false;
   }
-}
 
 
 function viewRevision(revision: ArticleRevision) {

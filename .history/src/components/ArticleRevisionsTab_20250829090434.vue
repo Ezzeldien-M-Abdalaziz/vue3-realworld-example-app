@@ -151,33 +151,6 @@ async function fetchRevisions() {
 //   }
 // }
 
-async function revertRevision(revisionId: number) {
-  if (!confirm('Are you sure you want to revert to this revision? This action cannot be undone.'))
-    return;
-
-  reverting.value = true;
-
-  try {
-    const res = await api.articles.revertArticleRevision(props.articleId, revisionId);
-
-    if (res.data && res.data.article && res.data.article.slug) {
-      toast.success("Article reverted successfully!");
-      // Redirect to updated article
-      window.location.href = `/#/article/${res.data.article.slug}`;
-    } else {
-      toast.success("Article reverted successfully! Redirecting to home...");
-      window.location.href = "/#/";
-    }
-  } catch (error_) {
-    if (isFetchError(error_))
-      toast.error("Failed to revert revision.");
-    else
-      toast.error("An unexpected error occurred.");
-  } finally {
-    reverting.value = false;
-  }
-}
-
 
 function viewRevision(revision: ArticleRevision) {
   selectedRevision.value = revision

@@ -39,8 +39,8 @@
       />
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs mt-4">
+    <!-- Tabs - Only show revisions tab to article author -->
+    <div v-if="isArticleAuthor" class="tabs mt-4">
       <button
         :class="{ active: activeTab === 'content' }"
         class="btn btn-outline-primary me-2"
@@ -49,7 +49,6 @@
         Content
       </button>
       <button
-        v-if="userStore.isAuthorized"
         :class="{ active: activeTab === 'revisions' }"
         class="btn btn-outline-secondary"
         @click="activeTab = 'revisions'"
@@ -58,12 +57,16 @@
       </button>
     </div>
 
-    <div class="tab-content mt-3">
+    <div v-if="isArticleAuthor" class="tab-content mt-3">
       <div v-if="activeTab === 'content'">
         <div v-html="articleHandledBody" />
       </div>
-      <div v-if="activeTab === 'revisions' && userStore.isAuthorized">
-        <ArticleRevisionsTab :article-id="article.id" />
+      <div v-if="activeTab === 'revisions'">
+        <ArticleRevisionsTab
+          :article-id="article.id"
+          :article="article"
+          @article-reverted="updateArticle"
+        />
       </div>
     </div>
   </div>
@@ -87,6 +90,13 @@ const activeTab = ref('content')
 
 const articleHandledBody = computed(() => marked(article.body))
 
+// Check if current user is the article author
+const isArticleAuthor = computed(() => {
+  return userStore.isAuthorized &&
+         userStore.user &&
+         userStore.user.username === article.author.username
+})
+
 function updateArticle(newArticle: Article) {
   Object.assign(article, newArticle)
 }
@@ -100,11 +110,9 @@ function updateArticle(newArticle: Article) {
 }
 
 .tabs button.active {
-  background-color:
-#007bff;
+  background-color: #007bff;
   color: white;
-  border-color:
-#007bff;
+  border-color: #007bff;
 }
 
 .tab-content {

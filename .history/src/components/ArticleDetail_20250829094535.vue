@@ -100,11 +100,9 @@ function updateArticle(newArticle: Article) {
 }
 
 .tabs button.active {
-  background-color:
-#007bff;
+  background-color: #007bff;
   color: white;
-  border-color:
-#007bff;
+  border-color: #007bff;
 }
 
 .tab-content {

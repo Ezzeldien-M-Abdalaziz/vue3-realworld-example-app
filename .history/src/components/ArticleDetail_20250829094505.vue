@@ -62,7 +62,7 @@
       <div v-if="activeTab === 'content'">
         <div v-html="articleHandledBody" />
       </div>
-      <div v-if="activeTab === 'revisions' && userStore.isAuthorized">
+      <div v-if="activeTab === 'revisions'">
         <ArticleRevisionsTab :article-id="article.id" />
       </div>
     </div>
@@ -100,11 +100,9 @@ function updateArticle(newArticle: Article) {
 }
 
 .tabs button.active {
-  background-color:
-#007bff;
+  background-color: #007bff;
   color: white;
-  border-color:
-#007bff;
+  border-color: #007bff;
 }
 
 .tab-content {

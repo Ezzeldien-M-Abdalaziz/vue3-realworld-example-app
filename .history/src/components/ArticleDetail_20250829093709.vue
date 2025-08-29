@@ -17,7 +17,6 @@
       <div id="article-content" class="col-md-12" v-html="articleHandledBody" />
       <!-- eslint-enable vue/no-v-html -->
 
-      <!-- TODO: abstract tag list component -->
       <ul class="tag-list">
         <li
           v-for="tag in article.tagList"
@@ -48,6 +47,8 @@
       >
         Content
       </button>
+
+      <!-- Only show Revisions tab if user is authorized -->
       <button
         v-if="userStore.isAuthorized"
         :class="{ active: activeTab === 'revisions' }"
@@ -62,6 +63,8 @@
       <div v-if="activeTab === 'content'">
         <div v-html="articleHandledBody" />
       </div>
+
+      <!-- Only render Revisions tab content if user is authorized -->
       <div v-if="activeTab === 'revisions' && userStore.isAuthorized">
         <ArticleRevisionsTab :article-id="article.id" />
       </div>
@@ -81,10 +84,13 @@ import ArticleRevisionsTab from './ArticleRevisionsTab.vue'
 
 const route = useRoute()
 const slug = route.params.slug as string
+
+// Fetch article
 const article: Article = reactive(await api.articles.getArticle(slug).then(res => res.data.article))
 const userStore = useUserStore()
 const activeTab = ref('content')
 
+// Render article body with marked
 const articleHandledBody = computed(() => marked(article.body))
 
 function updateArticle(newArticle: Article) {
@@ -100,11 +106,9 @@ function updateArticle(newArticle: Article) {
 }
 
 .tabs button.active {
-  background-color:
-#007bff;
+  background-color: #007bff;
   color: white;
-  border-color:
-#007bff;
+  border-color: #007bff;
 }
 
 .tab-content {

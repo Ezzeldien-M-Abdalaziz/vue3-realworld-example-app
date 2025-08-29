@@ -48,6 +48,8 @@
       >
         Content
       </button>
+
+      <!-- Only show this button if user is authorized -->
       <button
         v-if="userStore.isAuthorized"
         :class="{ active: activeTab === 'revisions' }"
@@ -62,15 +64,16 @@
       <div v-if="activeTab === 'content'">
         <div v-html="articleHandledBody" />
       </div>
+
       <div v-if="activeTab === 'revisions' && userStore.isAuthorized">
-        <ArticleRevisionsTab :article-id="article.id" />
+        <ArticleRevisionsTab :article-id="article?.id" />
       </div>
     </div>
-  </div>
+
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import marked from 'src/plugins/marked'
 import { api } from 'src/services'
@@ -81,16 +84,36 @@ import ArticleRevisionsTab from './ArticleRevisionsTab.vue'
 
 const route = useRoute()
 const slug = route.params.slug as string
-const article: Article = reactive(await api.articles.getArticle(slug).then(res => res.data.article))
-const userStore = useUserStore()
+const article = ref<Article | null>(null)
 const activeTab = ref('content')
+const userStore = useUserStore()
 
-const articleHandledBody = computed(() => marked(article.body))
+const articleHandledBody = computed(() =>
+  article.value ? marked(article.value.body) : ''
+)
 
 function updateArticle(newArticle: Article) {
-  Object.assign(article, newArticle)
+  if (article.value) Object.assign(article.value, newArticle)
 }
+
+onMounted(async () => {
+  try {
+    const res = await api.articles.getArticle(slug)
+    article.value = res.data.article
+  } catch (err) {
+    console.error('Failed to fetch article:', err)
+  }
+})
+
+// Ensure unauthorized users cannot switch to revisions
+watch(() => userStore.isAuthorized, (authorized) => {
+  if (!authorized && activeTab.value === 'revisions') {
+    activeTab.value = 'content'
+  }
+})
 </script>
+
+
 
 <style scoped>
 .tabs {
@@ -100,11 +123,9 @@ function updateArticle(newArticle: Article) {
 }
 
 .tabs button.active {
-  background-color:
-#007bff;
+  background-color: #007bff;
   color: white;
-  border-color:
-#007bff;
+  border-color: #007bff;
 }
 
 .tab-content {

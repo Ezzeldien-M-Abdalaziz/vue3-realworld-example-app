@@ -48,6 +48,8 @@
       >
         Content
       </button>
+
+       <!-- Only show this button if user is authorized -->
       <button
         v-if="userStore.isAuthorized"
         :class="{ active: activeTab === 'revisions' }"
@@ -69,7 +71,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import marked from 'src/plugins/marked'
@@ -90,6 +92,54 @@ const articleHandledBody = computed(() => marked(article.body))
 function updateArticle(newArticle: Article) {
   Object.assign(article, newArticle)
 }
+</script> -->
+
+<script setup lang="ts">
+import { computed, ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import marked from 'src/plugins/marked'
+import { api } from 'src/services'
+import type { Article } from 'src/services/api'
+import { useUserStore } from 'src/store/user'
+import ArticleDetailMeta from './ArticleDetailMeta.vue'
+import ArticleRevisionsTab from './ArticleRevisionsTab.vue'
+
+const route = useRoute()
+const slug = route.params.slug as string
+
+const article = ref<Article>({
+  id: 0,
+  slug: '',
+  title: '',
+  description: '',
+  body: '',
+  tagList: [],
+  createdAt: '',
+  updatedAt: '',
+  favorited: false,
+  favoritesCount: 0,
+  author: { username: '', bio: '', image: '', following: false },
+})
+
+const userStore = useUserStore()
+const activeTab = ref('content')
+
+const articleHandledBody = computed(() => marked(article.value.body))
+
+function updateArticle(newArticle: Article) {
+  Object.assign(article.value, newArticle)
+}
+
+async function fetchArticle() {
+  try {
+    const res = await api.articles.getArticle(slug)
+    article.value = res.data.article
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+onMounted(fetchArticle)
 </script>
 
 <style scoped>
@@ -100,11 +150,9 @@ function updateArticle(newArticle: Article) {
 }
 
 .tabs button.active {
-  background-color:
-#007bff;
+  background-color: #007bff;
   color: white;
-  border-color:
-#007bff;
+  border-color: #007bff;
 }
 
 .tab-content {

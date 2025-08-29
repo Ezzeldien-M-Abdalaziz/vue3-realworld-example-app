@@ -29,45 +29,45 @@
       </ul>
     </div>
 
-    <hr>
+         <hr>
 
-    <div class="article-actions">
-      <ArticleDetailMeta
-        v-if="article"
-        :article="article"
-        @update="updateArticle"
-      />
-    </div>
+     <div class="article-actions">
+       <ArticleDetailMeta
+         v-if="article"
+         :article="article"
+         @update="updateArticle"
+       />
+     </div>
 
-    <!-- Tabs -->
-    <div class="tabs mt-4">
-      <button
-        :class="{ active: activeTab === 'content' }"
-        class="btn btn-outline-primary me-2"
-        @click="activeTab = 'content'"
-      >
-        Content
-      </button>
-      <button
-        v-if="userStore.isAuthorized"
-        :class="{ active: activeTab === 'revisions' }"
-        class="btn btn-outline-secondary"
-        @click="activeTab = 'revisions'"
-      >
-        Revisions
-      </button>
-    </div>
+     <!-- Tabs -->
+     <div class="tabs mt-4">
+       <button
+         @click="activeTab = 'content'"
+         :class="{ active: activeTab === 'content' }"
+         class="btn btn-outline-primary me-2"
+       >
+         Content
+       </button>
+       <button
+         v-if="userStore.isAuthorized"
+         @click="activeTab = 'revisions'"
+         :class="{ active: activeTab === 'revisions' }"
+         class="btn btn-outline-secondary"
+       >
+         Revisions
+       </button>
+     </div>
 
-    <div class="tab-content mt-3">
-      <div v-if="activeTab === 'content'">
-        <div v-html="articleHandledBody" />
-      </div>
-      <div v-if="activeTab === 'revisions' && userStore.isAuthorized">
-        <ArticleRevisionsTab :article-id="article.id" />
-      </div>
-    </div>
-  </div>
-</template>
+     <div class="tab-content mt-3">
+       <div v-if="activeTab === 'content'">
+         <div v-html="articleHandledBody"></div>
+       </div>
+       <div v-if="activeTab === 'revisions'">
+         <ArticleRevisionsTab :articleSlug="slug" />
+       </div>
+     </div>
+   </div>
+ </template>
 
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
@@ -75,9 +75,9 @@ import { useRoute } from 'vue-router'
 import marked from 'src/plugins/marked'
 import { api } from 'src/services'
 import type { Article } from 'src/services/api'
-import { useUserStore } from 'src/store/user'
 import ArticleDetailMeta from './ArticleDetailMeta.vue'
 import ArticleRevisionsTab from './ArticleRevisionsTab.vue'
+import { useUserStore } from 'src/store/user'
 
 const route = useRoute()
 const slug = route.params.slug as string
@@ -100,11 +100,9 @@ function updateArticle(newArticle: Article) {
 }
 
 .tabs button.active {
-  background-color:
-#007bff;
+  background-color: #007bff;
   color: white;
-  border-color:
-#007bff;
+  border-color: #007bff;
 }
 
 .tab-content {

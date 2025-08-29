@@ -48,6 +48,8 @@
       >
         Content
       </button>
+
+       <!-- Only show this button if user is authorized -->
       <button
         v-if="userStore.isAuthorized"
         :class="{ active: activeTab === 'revisions' }"
@@ -92,6 +94,7 @@ function updateArticle(newArticle: Article) {
 }
 </script>
 
+
 <style scoped>
 .tabs {
   display: flex;
@@ -100,11 +103,9 @@ function updateArticle(newArticle: Article) {
 }
 
 .tabs button.active {
-  background-color:
-#007bff;
+  background-color: #007bff;
   color: white;
-  border-color:
-#007bff;
+  border-color: #007bff;
 }
 
 .tab-content {

@@ -17,7 +17,6 @@
       <div id="article-content" class="col-md-12" v-html="articleHandledBody" />
       <!-- eslint-enable vue/no-v-html -->
 
-      <!-- TODO: abstract tag list component -->
       <ul class="tag-list">
         <li
           v-for="tag in article.tagList"
@@ -29,7 +28,7 @@
       </ul>
     </div>
 
-    <hr>
+    <hr />
 
     <div class="article-actions">
       <ArticleDetailMeta
@@ -48,8 +47,10 @@
       >
         Content
       </button>
+
+      <!-- Only show this button if user is authorized -->
       <button
-        v-if="userStore.isAuthorized"
+        v-if="isAuthorized"
         :class="{ active: activeTab === 'revisions' }"
         class="btn btn-outline-secondary"
         @click="activeTab = 'revisions'"
@@ -62,7 +63,7 @@
       <div v-if="activeTab === 'content'">
         <div v-html="articleHandledBody" />
       </div>
-      <div v-if="activeTab === 'revisions' && userStore.isAuthorized">
+      <div v-if="activeTab === 'revisions' && isAuthorized">
         <ArticleRevisionsTab :article-id="article.id" />
       </div>
     </div>
@@ -70,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import marked from 'src/plugins/marked'
 import { api } from 'src/services'
@@ -81,15 +82,42 @@ import ArticleRevisionsTab from './ArticleRevisionsTab.vue'
 
 const route = useRoute()
 const slug = route.params.slug as string
-const article: Article = reactive(await api.articles.getArticle(slug).then(res => res.data.article))
+
+// Reactive references
+const article = ref<Article>({
+  id: 0,
+  slug: '',
+  title: '',
+  description: '',
+  body: '',
+  tagList: [],
+  createdAt: '',
+  updatedAt: '',
+  favorited: false,
+  favoritesCount: 0,
+  author: { username: '', bio: '', image: '', following: false }
+})
+
 const userStore = useUserStore()
 const activeTab = ref('content')
 
-const articleHandledBody = computed(() => marked(article.body))
+// Computed helper for reactivity
+const isAuthorized = computed(() => userStore.isAuthorized)
+const articleHandledBody = computed(() => marked(article.value.body))
 
 function updateArticle(newArticle: Article) {
-  Object.assign(article, newArticle)
+  Object.assign(article.value, newArticle)
 }
+
+// Fetch the article on mount
+onMounted(async () => {
+  try {
+    const res = await api.articles.getArticle(slug)
+    article.value = res.data.article
+  } catch (err) {
+    console.error(err)
+  }
+})
 </script>
 
 <style scoped>
@@ -100,11 +128,9 @@ function updateArticle(newArticle: Article) {
 }
 
 .tabs button.active {
-  background-color:
-#007bff;
+  background-color: #007bff;
   color: white;
-  border-color:
-#007bff;
+  border-color: #007bff;
 }
 
 .tab-content {

@@ -69,19 +69,18 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useToast } from 'vue-toastification'
 import marked from 'src/plugins/marked'
 import { api, isFetchError } from 'src/services'
 import type { ArticleRevision } from 'src/services/api'
 import { useUserStore } from 'src/store/user'
-import { useToast } from "vue-toastification";
 
 interface Props {
   articleId: number
 }
 
-const toast = useToast();
 const props = defineProps<Props>()
-
+const toast = useToast()
 const userStore = useUserStore()
 const revisions = ref<ArticleRevision[]>([])
 const loading = ref(false)
@@ -153,31 +152,33 @@ async function fetchRevisions() {
 
 async function revertRevision(revisionId: number) {
   if (!confirm('Are you sure you want to revert to this revision? This action cannot be undone.'))
-    return;
+    return
 
-  reverting.value = true;
+  reverting.value = true
 
   try {
-    const res = await api.articles.revertArticleRevision(props.articleId, revisionId);
+    const res = await api.articles.revertArticleRevision(props.articleId, revisionId)
 
     if (res.data && res.data.article && res.data.article.slug) {
-      toast.success("Article reverted successfully!");
+      toast.success('Article reverted successfully!')
       // Redirect to updated article
-      window.location.href = `/#/article/${res.data.article.slug}`;
-    } else {
-      toast.success("Article reverted successfully! Redirecting to home...");
-      window.location.href = "/#/";
+      window.location.href = `/#/article/${res.data.article.slug}`
     }
-  } catch (error_) {
+    else {
+      toast.success('Article reverted successfully! Redirecting to home...')
+      window.location.href = '/#/'
+    }
+  }
+  catch (error_) {
     if (isFetchError(error_))
-      toast.error("Failed to revert revision.");
+      toast.error('Failed to revert revision.')
     else
-      toast.error("An unexpected error occurred.");
-  } finally {
-    reverting.value = false;
+      toast.error('An unexpected error occurred.')
+  }
+  finally {
+    reverting.value = false
   }
 }
-
 
 function viewRevision(revision: ArticleRevision) {
   selectedRevision.value = revision

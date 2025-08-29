@@ -92,10 +92,8 @@ async function login() {
     await routerPush('global-feed')
   }
   catch (error) {
-    if (isFetchError(error)) {
+    if (isFetchError(error))
       errors.value = error.error?.errors
-      return
-    }
   }
 }
 </script>

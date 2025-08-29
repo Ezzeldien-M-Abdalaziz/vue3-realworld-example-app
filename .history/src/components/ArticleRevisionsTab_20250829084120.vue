@@ -32,13 +32,13 @@
           </div>
 
           <div class="revision-actions">
-            <button
-              v-if="userStore.isAuthorized"
-              class="btn btn-sm btn-outline-primary me-2"
-              @click="viewRevision(revision)"
-            >
-              View
-            </button>
+                         <button
+               v-if="userStore.isAuthorized"
+               class="btn btn-sm btn-outline-primary me-2"
+               @click="viewRevision(revision)"
+             >
+               View
+             </button>
             <button
               v-if="userStore.isAuthorized"
               class="btn btn-sm btn-warning"
@@ -52,18 +52,18 @@
       </div>
     </div>
 
-    <!-- Simple Modal Test -->
-    <div v-if="showPreview" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-      <div style="background: white; padding: 20px; border-radius: 8px; max-width: 600px; width: 90%;">
-        <h3>Revision Preview</h3>
-        <p><strong>Title:</strong> {{ selectedRevision?.title }}</p>
-        <p><strong>Description:</strong> {{ selectedRevision?.description }}</p>
-        <p><strong>Body:</strong> {{ selectedRevision?.body }}</p>
-        <button style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;" @click="closePreview">
-          Close
-        </button>
-      </div>
-    </div>
+              <!-- Simple Modal Test -->
+     <div v-if="showPreview" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+       <div style="background: white; padding: 20px; border-radius: 8px; max-width: 600px; width: 90%;">
+         <h3>Revision Preview</h3>
+         <p><strong>Title:</strong> {{ selectedRevision?.title }}</p>
+         <p><strong>Description:</strong> {{ selectedRevision?.description }}</p>
+         <p><strong>Body:</strong> {{ selectedRevision?.body }}</p>
+         <button @click="closePreview" style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+           Close
+         </button>
+       </div>
+     </div>
   </div>
 </template>
 
@@ -160,12 +160,12 @@ function formatDate(dateString: string) {
 
   try {
     const date = new Date(dateString)
-    if (isNaN(date.getTime()))
+    if (isNaN(date.getTime())) {
       return 'Invalid date'
-
+    }
     return date.toLocaleString()
   }
-  catch {
+  catch (error) {
     return 'Invalid date'
   }
 }

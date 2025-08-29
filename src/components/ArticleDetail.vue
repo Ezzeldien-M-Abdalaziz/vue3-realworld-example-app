@@ -63,7 +63,7 @@
         <div v-html="articleHandledBody" />
       </div>
       <div v-if="activeTab === 'revisions'">
-        <ArticleRevisionsTab :articleId="article.id" />
+        <ArticleRevisionsTab :article-id="article.id" />
       </div>
     </div>
   </div>

@@ -252,7 +252,6 @@ export class HttpClient<SecurityDataType = unknown> {
     format,
     baseUrl,
     cancelToken,
-    method,
     ...params
   }: FullRequestParams): Promise<HttpResponse<T, E>> => {
     const secureParams =
@@ -266,10 +265,16 @@ export class HttpClient<SecurityDataType = unknown> {
     const responseFormat = format || requestParams.format;
 
     const finalUrl = `${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`;
+    console.log('API Request URL:', {
+      baseUrl,
+      thisBaseUrl: this.baseUrl,
+      path,
+      finalUrl,
+      method
+    });
 
     return this.customFetch(finalUrl, {
       ...requestParams,
-      method,
       headers: {
         ...(requestParams.headers || {}),
         ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),

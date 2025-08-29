@@ -139,7 +139,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "";
+  public baseUrl: string = "https://api.realworld.io/api";
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -252,7 +252,6 @@ export class HttpClient<SecurityDataType = unknown> {
     format,
     baseUrl,
     cancelToken,
-    method,
     ...params
   }: FullRequestParams): Promise<HttpResponse<T, E>> => {
     const secureParams =
@@ -265,11 +264,8 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    const finalUrl = `${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`;
-
-    return this.customFetch(finalUrl, {
+    return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
       ...requestParams,
-      method,
       headers: {
         ...(requestParams.headers || {}),
         ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
@@ -311,7 +307,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title RealWorld Conduit API
  * @version 1.0.0
  * @license MIT License (https://opensource.org/licenses/MIT)
- * @baseUrl Environment variable VITE_API_HOST
+ * @baseUrl https://api.realworld.io/api
  * @contact RealWorld (https://www.realworld.how)
  *
  * Conduit API documentation

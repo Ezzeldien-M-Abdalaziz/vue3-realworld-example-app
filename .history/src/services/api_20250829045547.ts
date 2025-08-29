@@ -154,6 +154,8 @@ export class HttpClient<SecurityDataType = unknown> {
 
   constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
     Object.assign(this, apiConfig);
+    console.log('HttpClient constructor - apiConfig:', apiConfig);
+    console.log('HttpClient constructor - this.baseUrl after assign:', this.baseUrl);
   }
 
   public setSecurityData = (data: SecurityDataType | null) => {
@@ -252,7 +254,6 @@ export class HttpClient<SecurityDataType = unknown> {
     format,
     baseUrl,
     cancelToken,
-    method,
     ...params
   }: FullRequestParams): Promise<HttpResponse<T, E>> => {
     const secureParams =
@@ -266,10 +267,16 @@ export class HttpClient<SecurityDataType = unknown> {
     const responseFormat = format || requestParams.format;
 
     const finalUrl = `${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`;
+    console.log('Request URL construction:', {
+      baseUrl,
+      thisBaseUrl: this.baseUrl,
+      path,
+      queryString,
+      finalUrl
+    });
 
     return this.customFetch(finalUrl, {
       ...requestParams,
-      method,
       headers: {
         ...(requestParams.headers || {}),
         ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),

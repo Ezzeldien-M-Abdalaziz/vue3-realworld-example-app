@@ -3,7 +3,6 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import registerGlobalComponents from './plugins/global-components'
 import setAuthorizationToken from './plugins/set-authorization-token'
-import ToastPlugin from "./plugins/toast";
 import { router } from './router'
 
 const app = createApp(App)
@@ -13,6 +12,5 @@ app.use(router)
 
 setAuthorizationToken()
 registerGlobalComponents(app)
-app.use(ToastPlugin);
 
 app.mount('#app')

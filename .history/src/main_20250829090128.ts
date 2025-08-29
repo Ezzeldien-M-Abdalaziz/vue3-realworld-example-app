@@ -13,6 +13,5 @@ app.use(router)
 
 setAuthorizationToken()
 registerGlobalComponents(app)
-app.use(ToastPlugin);
 
 app.mount('#app')

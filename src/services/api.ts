@@ -433,12 +433,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         GenericErrorModel
       >({
         path: `/user`,
-        method: "PUT",
+        method: "POST",
         body: data,
         secure: true,
         ...params,
       }),
   };
+
+
   profiles = {
     /**
      * @description Get a profile of a user of the system. Auth is optional

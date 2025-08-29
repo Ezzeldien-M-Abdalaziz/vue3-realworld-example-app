@@ -29,6 +29,15 @@
           </AppLink>
         </li>
       </ul>
+      <div v-if="userStore.isAuthorized && userStore.user" class="user-info">
+        <img
+          v-if="userStore.user.image"
+          :src="profileImageUrl"
+          alt="Profile"
+          class="profile-image"
+        />
+        <span>{{ userStore.user.username }}</span>
+      </div>
     </div>
   </nav>
 </template>
@@ -48,7 +57,8 @@ interface NavLink {
   display: 'all' | 'anonym' | 'authorized'
 }
 
-const { user } = storeToRefs(useUserStore())
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
 
 const username = computed(() => user.value?.username)
 const displayStatus = computed(() => username.value ? 'authorized' : 'anonym')
@@ -92,4 +102,27 @@ const allNavLinks = computed<NavLink[]>(() => [
 const navLinks = computed(() => allNavLinks.value.filter(
   l => l.display === displayStatus.value || l.display === 'all',
 ))
+
+const profileImageUrl = computed(() => {
+  if (!user.value?.image) return ''
+  return user.value.image.startsWith('http')
+    ? user.value.image
+    : `${import.meta.env.VITE_API_HOST}/storage/${user.value.image}`
+})
 </script>
+
+
+
+<style scoped>
+.profile-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+}
+</style>

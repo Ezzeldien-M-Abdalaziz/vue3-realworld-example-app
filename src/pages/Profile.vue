@@ -48,6 +48,17 @@
       </div>
     </div>
 
+    <div class="user-profile">
+      <img
+        v-if="userStore.user?.image"
+        :src="profileImageUrl"
+        alt="Profile"
+        class="profile-image"
+      />
+      <h2>{{ userStore.user?.username }}</h2>
+      <p>{{ userStore.user?.bio }}</p>
+    </div>
+
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-md-10 offset-md-1">
@@ -91,6 +102,15 @@ const { user, isAuthorized } = storeToRefs(useUserStore())
 
 const showEdit = computed<boolean>(() => isAuthorized && user.value?.username === username.value)
 const showFollow = computed<boolean>(() => user.value?.username !== username.value)
+
+const userStore = useUserStore()
+
+const profileImageUrl = computed(() => {
+  if (!userStore.user?.image) return ''
+  return userStore.user.image.startsWith('http')
+    ? userStore.user.image
+    : `${import.meta.env.VITE_API_HOST}/storage/${userStore.user.image}`
+})
 </script>
 
 <style scoped>
@@ -99,5 +119,16 @@ const showFollow = computed<boolean>(() => user.value?.username !== username.val
 }
 .align-left {
   text-align: left
+}
+.profile-image {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 16px;
+}
+.user-profile {
+  text-align: center;
+  margin-bottom: 32px;
 }
 </style>

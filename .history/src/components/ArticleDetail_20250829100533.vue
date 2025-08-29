@@ -49,12 +49,13 @@
         Content
       </button>
       <button
-        v-if="userStore.isAuthorized && userStore.user?.username === article.author.username"
+        v-if="userStore.isAuthorized"
         :class="{ active: activeTab === 'revisions' }"
         class="btn btn-outline-secondary"
         @click="activeTab = 'revisions'"
       >
         Revisions
+
       </button>
     </div>
 

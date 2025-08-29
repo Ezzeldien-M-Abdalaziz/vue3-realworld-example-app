@@ -100,9 +100,11 @@ async function fetchRevisions() {
 
   try {
     const res = await api.articles.getArticleRevisions(props.articleId)
+    console.log('Revisions response:', res.data.revisions) // Debug log
     revisions.value = res.data.revisions
   }
   catch (error_) {
+    console.error('Fetch revisions error:', error_) // Debug log
     if (isFetchError(error_))
       error.value = 'Failed to fetch revisions.'
     else

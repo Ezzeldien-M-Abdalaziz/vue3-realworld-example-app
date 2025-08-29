@@ -32,13 +32,13 @@
           </div>
 
           <div class="revision-actions">
-                         <button
-               v-if="userStore.isAuthorized"
-               class="btn btn-sm btn-outline-primary me-2"
-               @click="() => { console.log('Button clicked!'); viewRevision(revision); }"
-             >
-               View
-             </button>
+            <button
+              v-if="userStore.isAuthorized"
+              class="btn btn-sm btn-outline-primary me-2"
+              @click="viewRevision(revision)"
+            >
+              View
+            </button>
             <button
               v-if="userStore.isAuthorized"
               class="btn btn-sm btn-warning"
@@ -52,18 +52,51 @@
       </div>
     </div>
 
-              <!-- Simple Modal Test -->
-     <div v-if="showPreview" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-       <div style="background: white; padding: 20px; border-radius: 8px; max-width: 600px; width: 90%;">
-         <h3>Revision Preview</h3>
-         <p><strong>Title:</strong> {{ selectedRevision?.title }}</p>
-         <p><strong>Description:</strong> {{ selectedRevision?.description }}</p>
-         <p><strong>Body:</strong> {{ selectedRevision?.body }}</p>
-         <button @click="closePreview" style="margin-top: 10px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-           Close
-         </button>
-       </div>
-     </div>
+    <!-- Revision Preview Modal -->
+    <div
+      v-if="showPreview"
+      class="modal fade show"
+      style="display: block;"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ selectedRevision?.title }}</h5>
+            <button
+              type="button"
+              class="btn-close"
+              @click="closePreview"
+            />
+          </div>
+          <div class="modal-body">
+            <div v-if="selectedRevision?.description" class="mb-3">
+              <strong>Description:</strong>
+              <p>{{ selectedRevision.description }}</p>
+            </div>
+            <div v-if="selectedRevision?.body">
+              <strong>Content:</strong>
+              <div v-html="markedContent" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="closePreview"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Backdrop -->
+    <div
+      v-if="showPreview"
+      class="modal-backdrop fade show"
+    />
   </div>
 </template>
 
@@ -100,9 +133,11 @@ async function fetchRevisions() {
 
   try {
     const res = await api.articles.getArticleRevisions(props.articleId)
+    console.log('Revisions response:', res.data.revisions) // Debug log
     revisions.value = res.data.revisions
   }
   catch (error_) {
+    console.error('Fetch revisions error:', error_) // Debug log
     if (isFetchError(error_))
       error.value = 'Failed to fetch revisions.'
     else

@@ -165,7 +165,7 @@ function formatDate(dateString: string) {
 
   try {
     const date = new Date(dateString)
-    if (Number.isNaN(date.getTime()))
+    if (isNaN(date.getTime()))
       return 'Invalid date'
 
     return date.toLocaleString()

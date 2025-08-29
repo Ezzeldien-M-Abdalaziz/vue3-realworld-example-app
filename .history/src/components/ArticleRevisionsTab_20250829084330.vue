@@ -114,7 +114,6 @@ async function fetchRevisions() {
 }
 
 async function revertRevision(revisionId: number) {
-  // eslint-disable-next-line no-alert
   if (!confirm('Are you sure you want to revert to this revision? This action cannot be undone.'))
     return
 
@@ -124,13 +123,11 @@ async function revertRevision(revisionId: number) {
     const res = await api.articles.revertArticleRevision(props.articleId, revisionId)
 
     if (res.data && res.data.article && res.data.article.slug) {
-      // eslint-disable-next-line no-alert
       alert('Article reverted successfully!')
       // Redirect to the updated article with new slug
       window.location.href = `/#/article/${res.data.article.slug}`
     }
     else {
-      // eslint-disable-next-line no-alert
       alert('Article reverted successfully! Redirecting to home...')
       // Fallback to home if slug is not available
       window.location.href = '/#/'
@@ -138,10 +135,8 @@ async function revertRevision(revisionId: number) {
   }
   catch (error_) {
     if (isFetchError(error_))
-      // eslint-disable-next-line no-alert
       alert('Failed to revert revision.')
     else
-      // eslint-disable-next-line no-alert
       alert('An unexpected error occurred.')
   }
   finally {
@@ -165,7 +160,7 @@ function formatDate(dateString: string) {
 
   try {
     const date = new Date(dateString)
-    if (Number.isNaN(date.getTime()))
+    if (isNaN(date.getTime()))
       return 'Invalid date'
 
     return date.toLocaleString()
